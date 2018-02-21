@@ -1,7 +1,7 @@
 /*
  * Create a list that holds all of your cards
  */
-var cards = ["fa-diamond", "fa-diamond",
+const cards = ["fa-diamond", "fa-diamond",
             "fa-paper-plane-o", "fa-paper-plane-o",
             "fa-anchor", "fa-anchor",
             "fa-bolt", "fa-bolt",
@@ -9,7 +9,8 @@ var cards = ["fa-diamond", "fa-diamond",
             "fa-leaf", "fa-leaf",
             "fa-bicycle", "fa-bicycle",
             "fa-bomb", "fa-bomb"];
-
+let moves = 0;
+let firstCardSelectedIndex = null;
 /*
  * Display the cards on the page
  *   - shuffle the list of cards using the provided "shuffle" method below
@@ -20,19 +21,45 @@ var cards = ["fa-diamond", "fa-diamond",
 displayGrid();
 
 function displayGrid() {
-  var grid = shuffle(cards);
-  let ul = document.getElementsByClassName("deck")[0];
-  for(card of grid) {
-    let li = document.createElement("li");
+  const grid = shuffle(cards);
+  const ul = document.getElementsByClassName("deck")[0];
+  for(index in grid) {
+    const li = document.createElement("li");
     li.className = "card";
-    li.innerHTML = "<i class=\"fa " + card +"\"></i>";
+    li.innerHTML = "<i class=\"fa " + grid[index] +"\"></i>";
     li.addEventListener("click", cardClicked);
+    li.id = index
     ul.appendChild(li);
   }
 }
 
+//Handles click on a card
 function cardClicked(event) {
-  event.target.className = "card open show";
+  if(event.target.className === "card") {
+    event.target.className = "card open show";
+
+    if(firstCardSelectedIndex === null) {
+      firstCardSelectedIndex = event.target.id;
+    }
+    else {
+      moves++;
+      console.log(moves);
+      document.getElementsByClassName("moves")[0].textContent = moves;
+      const firstCard = document.getElementsByClassName("card")[firstCardSelectedIndex];
+      console.log(firstCard);
+      if(event.target.innerHTML === firstCard.innerHTML) {
+        event.target.className = "card match";
+        firstCard.className = "card match";
+        firstCardSelectedIndex == null;
+      }
+
+      else {
+        event.target.className = "card";
+        firstCard.className = "card";
+      }
+      firstCardSelectedIndex = null;
+    }
+  }
 }
 
 
