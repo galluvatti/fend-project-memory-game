@@ -1,7 +1,14 @@
 /*
  * Create a list that holds all of your cards
  */
-
+var cards = ["fa-diamond", "fa-diamond",
+            "fa-paper-plane-o", "fa-paper-plane-o",
+            "fa-anchor", "fa-anchor",
+            "fa-bolt", "fa-bolt",
+            "fa-cube", "fa-cube",
+            "fa-leaf", "fa-leaf",
+            "fa-bicycle", "fa-bicycle",
+            "fa-bomb", "fa-bomb"];
 
 /*
  * Display the cards on the page
@@ -9,6 +16,25 @@
  *   - loop through each card and create its HTML
  *   - add each card's HTML to the page
  */
+
+displayGrid();
+
+function displayGrid() {
+  var grid = shuffle(cards);
+  let ul = document.getElementsByClassName("deck")[0];
+  for(card of grid) {
+    let li = document.createElement("li");
+    li.className = "card";
+    li.innerHTML = "<i class=\"fa " + card +"\"></i>";
+    li.addEventListener("click", cardClicked);
+    ul.appendChild(li);
+  }
+}
+
+function cardClicked(event) {
+  event.target.className = "card open show";
+}
+
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
