@@ -26,7 +26,7 @@ function displayGrid() {
   ul.innerHTML = "";
   for(index in grid) {
     const li = document.createElement("li");
-    li.className = "card";
+    li.className = "card animated";
     li.innerHTML = "<i class=\"fa " + grid[index] +"\"></i>";
     li.addEventListener("click", cardClicked);
     li.id = index
@@ -64,28 +64,38 @@ document.getElementsByClassName("restart")[0].addEventListener("click", restart)
 
 //Handles click on a card
 function cardClicked(event) {
-  if(event.target.className === "card") {
+  if(event.target.className === "card animated") {
     displayCard(event.target);
     addToOpenCards(event.target);
     if(selectedCards.length === 2) {
-      console.log("Checking cards");
-      if(cardsMatch()){
-        lockCards();
-      }
-      else {
-        hideCards();
-      }
-      increaseMovesCounter();
-    }
+      setTimeout(checkIfCardsMatch, 800);
   }
 }
 
+function checkIfCardsMatch() {
+  if(cardsMatch()){
+    lockCards();
+  }
+  else {
+    shakeCards();
+    setTimeout(hideCards, 800);
+  }
+  increaseMovesCounter();
+}
+}
+
 function hideCards() {
-  document.getElementsByClassName("card")[selectedCards[0]].className = "card";
-  document.getElementsByClassName("card")[selectedCards[1]].className = "card";
+  document.getElementsByClassName("card")[selectedCards[0]].className = "card animated flipInY";
+  document.getElementsByClassName("card")[selectedCards[1]].className = "card animated flipInY";
 
   selectedCards.pop();
   selectedCards.pop();
+}
+
+function shakeCards() {
+  document.getElementsByClassName("card")[selectedCards[0]].className = "card animated open show shake";
+  document.getElementsByClassName("card")[selectedCards[1]].className = "card animated open show shake";
+
 }
 
 function lockCards() {
@@ -107,7 +117,7 @@ function addToOpenCards(element) {
 }
 
 function displayCard(target) {
-  target.className = "card open show";
+  target.className = "card animated open show flipInY";
 }
 
 function increaseMovesCounter() {
