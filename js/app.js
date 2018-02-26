@@ -69,27 +69,47 @@ function cardClicked(event) {
     addToOpenCards(event.target);
     if(selectedCards.length === 2) {
       setTimeout(checkIfCardsMatch, 800);
+    }
   }
-}
 
-function checkIfCardsMatch() {
-  if(cardsMatch()){
-    lockCards();
+  function checkMatchCompleted() {
+    // if(document.getElementsByClassName("animated").length === 0) {
+      console.log("match completed");
+      const container = document.getElementsByClassName("container")[0];
+      container.className = "end";
+      container.innerHTML = "<header><h1>Congratulations! You Won!</h1></header>";
+      const button = document.createElement("input");
+      button.type = "button";
+      button.value = "Play again";
+      button.onclick = function () {location.reload()};
+      container.appendChild(button);
+    // }
   }
-  else {
-    shakeCards();
-    setTimeout(hideCards, 800);
+
+  function checkIfCardsMatch() {
+    if(cardsMatch()){
+      lockCards();
+    }
+    else {
+      shakeCards();
+      setTimeout(hideCards, 800);
+    }
+    increaseMovesCounter();
+    checkMatchCompleted();
   }
-  increaseMovesCounter();
-}
 }
 
 function hideCards() {
   document.getElementsByClassName("card")[selectedCards[0]].className = "card animated flipInY";
   document.getElementsByClassName("card")[selectedCards[1]].className = "card animated flipInY";
 
-  selectedCards.pop();
-  selectedCards.pop();
+  setTimeout(resetCards, 800);
+}
+
+function resetCards() {
+  document.getElementsByClassName("card")[selectedCards[0]].className = "card animated";
+  document.getElementsByClassName("card")[selectedCards[1]].className = "card animated";
+  selectedCards = [];
 }
 
 function shakeCards() {
@@ -102,8 +122,7 @@ function lockCards() {
   document.getElementsByClassName("card")[selectedCards[0]].className = "card match";
   document.getElementsByClassName("card")[selectedCards[1]].className = "card match";
 
-  selectedCards.pop();
-  selectedCards.pop();
+  selectedCards = [];
 }
 
 function cardsMatch() {
