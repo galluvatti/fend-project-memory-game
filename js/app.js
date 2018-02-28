@@ -11,6 +11,7 @@ const cards = ["fa-diamond", "fa-diamond",
 "fa-bomb", "fa-bomb"];
 let moves = 0;
 let selectedCards = [];
+let freezeGame = false;
 /*
 * Display the cards on the page
 *   - shuffle the list of cards using the provided "shuffle" method below
@@ -64,26 +65,34 @@ document.getElementsByClassName("restart")[0].addEventListener("click", restart)
 
 //Handles click on a card
 function cardClicked(event) {
+  if(freezeGame) {
+    return;
+  }
   if(event.target.className === "card animated") {
+    if(selectedCards.length ===1) {
+      freezeGame = true;
+    }
     displayCard(event.target);
     addToOpenCards(event.target);
     if(selectedCards.length === 2) {
       setTimeout(checkIfCardsMatch, 800);
+      freezeGame = false;
     }
   }
 
   function checkMatchCompleted() {
-    // if(document.getElementsByClassName("animated").length === 0) {
+    if(document.getElementsByClassName("animated").length === 0) {
       console.log("match completed");
       const container = document.getElementsByClassName("container")[0];
-      container.className = "end";
+      // container.className = "end";
       container.innerHTML = "<header><h1>Congratulations! You Won!</h1></header>";
       const button = document.createElement("input");
       button.type = "button";
       button.value = "Play again";
+      button.className = "btn btn-outline-success";
       button.onclick = function () {location.reload()};
       container.appendChild(button);
-    // }
+    }
   }
 
   function checkIfCardsMatch() {
@@ -149,4 +158,5 @@ function restart() {
   document.getElementsByClassName("moves")[0].textContent = moves;
   selectedCards = [];
   displayGrid();
+  freezeGame = false;
 }
