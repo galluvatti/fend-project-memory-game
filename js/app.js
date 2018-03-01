@@ -11,7 +11,6 @@ const cards = ["fa-diamond", "fa-diamond",
 "fa-bomb", "fa-bomb"];
 let moves = 0;
 let selectedCards = [];
-let freezeGame = false;
 /*
 * Display the cards on the page
 *   - shuffle the list of cards using the provided "shuffle" method below
@@ -65,48 +64,44 @@ document.getElementsByClassName("restart")[0].addEventListener("click", restart)
 
 //Handles click on a card
 function cardClicked(event) {
-  if(freezeGame) {
+  if(event.target.className !== "card animated" || selectedCards.length === 2) {
     return;
   }
-  if(event.target.className === "card animated") {
-    if(selectedCards.length ===1) {
-      freezeGame = true;
-    }
-    displayCard(event.target);
-    addToOpenCards(event.target);
-    if(selectedCards.length === 2) {
-      setTimeout(checkIfCardsMatch, 800);
-      freezeGame = false;
-    }
+
+  displayCard(event.target);
+  addToOpenCards(event.target);
+  if(selectedCards.length === 2) {
+    setTimeout(checkIfCardsMatch, 800);
   }
 
-  function checkMatchCompleted() {
-    if(document.getElementsByClassName("animated").length === 0) {
-      console.log("match completed");
-      const container = document.getElementsByClassName("container")[0];
-      // container.className = "end";
-      container.innerHTML = "<header><h1>Congratulations! You Won!</h1></header>";
-      const button = document.createElement("input");
-      button.type = "button";
-      button.value = "Play again";
-      button.className = "btn btn-outline-success";
-      button.onclick = function () {location.reload()};
-      container.appendChild(button);
-    }
-  }
+}
 
-  function checkIfCardsMatch() {
-    if(cardsMatch()){
-      lockCards();
-    }
-    else {
-      shakeCards();
-      setTimeout(hideCards, 800);
-    }
-    increaseMovesCounter();
-    checkMatchCompleted();
+function checkMatchCompleted() {
+  if(document.getElementsByClassName("animated").length === 0) {
+    console.log("match completed");
+    const container = document.getElementsByClassName("container")[0];
+    container.innerHTML = "<header><h1>Congratulations! You Won!</h1></header>";
+    const button = document.createElement("input");
+    button.type = "button";
+    button.value = "Play again";
+    button.className = "btn btn-outline-success";
+    button.onclick = function () {location.reload()};
+    container.appendChild(button);
   }
 }
+
+function checkIfCardsMatch() {
+  if(cardsMatch()){
+    lockCards();
+  }
+  else {
+    shakeCards();
+    setTimeout(hideCards, 800);
+  }
+  increaseMovesCounter();
+  checkMatchCompleted();
+}
+
 
 function hideCards() {
   document.getElementsByClassName("card")[selectedCards[0]].className = "card animated flipInY";
