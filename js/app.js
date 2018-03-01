@@ -12,6 +12,12 @@ const cards = ["fa-diamond", "fa-diamond",
 let moves = 0;
 let selectedCards = [];
 let stars = 3;
+
+let timer = new Timer();
+timer.start();
+timer.addEventListener('secondsUpdated', function (e) {
+  document.querySelector("#timer").innerHTML = timer.getTimeValues().toString();
+});
 /*
 * Display the cards on the page
 *   - shuffle the list of cards using the provided "shuffle" method below
@@ -21,6 +27,7 @@ let stars = 3;
 
 displayGrid();
 
+//Displays the cards grid
 function displayGrid() {
   const grid = shuffle(cards);
   const ul = document.getElementsByClassName("deck")[0];
@@ -77,12 +84,14 @@ function cardClicked(event) {
 
 }
 
+//Check id the player has matched all the cards and the game is completed
 function checkMatchCompleted() {
   if(document.getElementsByClassName("animated").length === 0) {
     console.log("match completed");
     const container = document.getElementsByClassName("container")[0];
     container.innerHTML = "<header><h1><b>Congratulations! You Won!</b></h1></header>"+
-    "<p>Completed with "+ moves +" Moves and " + stars + " Stars!</p>";
+    "<p>Completed in " + timer.getTimeValues().minutes +" minutes and " +timer.getTimeValues().seconds
+    + " seconds with "+ moves +" Moves and " + stars + " Stars!</p>";
     const button = document.createElement("input");
     button.type = "button";
     button.value = "Play again";
@@ -92,6 +101,10 @@ function checkMatchCompleted() {
   }
 }
 
+/*
+*Check if two cards match: if yes locks the cards open,
+*otherwise flip them closed
+*/
 function checkIfCardsMatch() {
   if(cardsMatch()){
     lockCards();
@@ -105,15 +118,10 @@ function checkIfCardsMatch() {
   checkMatchCompleted();
 }
 
+//Updates star rating
 function updateStars() {
   const starsElement = document.querySelector(".stars").querySelectorAll("i");
-  if(moves >= 15) {
-    starsElement[0].className = "fa fa-star-o";
-    starsElement[1].className = "fa fa-star-o";
-    starsElement[2].className = "fa fa-star-o";
-    stars = 0;
-  }
-  else if( moves >= 10) {
+  if( moves >= 10) {
     starsElement[1].className = "fa fa-star-o";
     starsElement[2].className = "fa fa-star-o";
     stars = 1;
@@ -124,6 +132,7 @@ function updateStars() {
   }
 }
 
+//Hide selected cards when they don't match
 function hideCards() {
   document.getElementsByClassName("card")[selectedCards[0]].className = "card animated flipInY";
   document.getElementsByClassName("card")[selectedCards[1]].className = "card animated flipInY";
@@ -131,18 +140,21 @@ function hideCards() {
   setTimeout(resetCards, 800);
 }
 
+//restores card default styles
 function resetCards() {
   document.getElementsByClassName("card")[selectedCards[0]].className = "card animated";
   document.getElementsByClassName("card")[selectedCards[1]].className = "card animated";
   selectedCards = [];
 }
 
+//apply shake animation to cards
 function shakeCards() {
   document.getElementsByClassName("card")[selectedCards[0]].className = "card animated open show shake";
   document.getElementsByClassName("card")[selectedCards[1]].className = "card animated open show shake";
 
 }
 
+//Locks card in open position
 function lockCards() {
   document.getElementsByClassName("card")[selectedCards[0]].className = "card match";
   document.getElementsByClassName("card")[selectedCards[1]].className = "card match";
@@ -150,29 +162,35 @@ function lockCards() {
   selectedCards = [];
 }
 
+//return true if selected cards match
 function cardsMatch() {
   return (selectedCards.length === 2)
   && (document.getElementsByClassName("card")[selectedCards[0]].innerHTML
   === document.getElementsByClassName("card")[selectedCards[1]].innerHTML);
 }
 
+//Add current card to list of selected cards
 function addToOpenCards(element) {
   selectedCards.push(element.id);
 }
 
+//Flip a card in open position
 function displayCard(target) {
   target.className = "card animated open show flipInY";
 }
 
+//Increase the moves counter
 function increaseMovesCounter() {
   moves++;
   document.getElementsByClassName("moves")[0].textContent = moves;
 }
 
+//Restart the game
 function restart() {
   moves = 0;
   document.getElementsByClassName("moves")[0].textContent = moves;
   selectedCards = [];
   displayGrid();
-  freezeGame = false;
+  timer = new Timer();
+  timer.start();
 }
