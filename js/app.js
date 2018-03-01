@@ -11,6 +11,7 @@ const cards = ["fa-diamond", "fa-diamond",
 "fa-bomb", "fa-bomb"];
 let moves = 0;
 let selectedCards = [];
+let stars = 3;
 /*
 * Display the cards on the page
 *   - shuffle the list of cards using the provided "shuffle" method below
@@ -80,11 +81,12 @@ function checkMatchCompleted() {
   if(document.getElementsByClassName("animated").length === 0) {
     console.log("match completed");
     const container = document.getElementsByClassName("container")[0];
-    container.innerHTML = "<header><h1>Congratulations! You Won!</h1></header>";
+    container.innerHTML = "<header><h1><b>Congratulations! You Won!</b></h1></header>"+
+    "<p>Completed with "+ moves +" Moves and " + stars + " Stars!</p>";
     const button = document.createElement("input");
     button.type = "button";
     button.value = "Play again";
-    button.className = "btn btn-outline-success";
+    button.className = "btn-play";
     button.onclick = function () {location.reload()};
     container.appendChild(button);
   }
@@ -99,9 +101,28 @@ function checkIfCardsMatch() {
     setTimeout(hideCards, 800);
   }
   increaseMovesCounter();
+  updateStars();
   checkMatchCompleted();
 }
 
+function updateStars() {
+  const starsElement = document.querySelector(".stars").querySelectorAll("i");
+  if(moves >= 15) {
+    starsElement[0].className = "fa fa-star-o";
+    starsElement[1].className = "fa fa-star-o";
+    starsElement[2].className = "fa fa-star-o";
+    stars = 0;
+  }
+  else if( moves >= 10) {
+    starsElement[1].className = "fa fa-star-o";
+    starsElement[2].className = "fa fa-star-o";
+    stars = 1;
+  }
+  else if(moves >= 5) {
+    starsElement[2].className = "fa fa-star-o";
+    stars = 2;
+  }
+}
 
 function hideCards() {
   document.getElementsByClassName("card")[selectedCards[0]].className = "card animated flipInY";
